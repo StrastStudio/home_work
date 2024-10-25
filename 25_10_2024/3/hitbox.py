@@ -54,9 +54,11 @@ class Hitbox:
         oy = other.__y
         ow = other.w
         oh = other.h
-        if (x + w >= ox and x + w <= ox + ow) or (x >= ox and x <= ox + ow) and \
-            (y + h >= oy and y + h <= oy + oh) or (y >= oy and y <= oy + oh): return True
-        return False
+        if x + w < ox: return False
+        if x > ox + ow: return False
+        if y + h < oy: return False
+        if y > oy + oh: return False
+        return True
 
     def __str__(self):
         return f"({self.__x=}, {self.__y=}, {self.__w=}, {self.__h=})"

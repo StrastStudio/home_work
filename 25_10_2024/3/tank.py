@@ -1,10 +1,15 @@
 from hitbox import  Hitbox
+from tkinter import PhotoImage, NW
 
 class Tank:
     __count = 0
     __SIZE = 100
     def __init__(self, canvas, model, ammo, x, y, speed=10):
         Tank.__count += 1
+        self.__ImgUp = PhotoImage(file = "../IMG/00003010.png")
+        self.__ImgDown = PhotoImage(file = "../IMG/00003012.png")
+        self.__ImgRight = PhotoImage(file = "../IMG/00003011.png")
+        self.__ImgLeft = PhotoImage(file = "../IMG/00003013.png")
         self.__model = model
         self.__health = self.fuel = 100
         self.__xp = 0
@@ -38,28 +43,38 @@ class Tank:
 
     def GetHitbox(self): return self.__hitbox
 
-    def __MoveSys(self, dx, dy):
+    def SetAmmo(self, Value): self.__ammo = Value
+
+    def MoveSys(self, dx, dy):
         if self.fuel > 0:
-            if dx == 1: self.__x += self.__speed
-            if dx == -1: self.__x -= self.__speed
-            if dy == 1: self.__y += self.__speed
-            if dy == -1: self.__y -= self.__speed
+            if dx == 1: 
+                self.__x += self.__speed
+                self.__canvas.itemconfig(self.__id, image=self.__ImgRight)
+            if dx == -1: 
+                self.__x -= self.__speed
+                self.__canvas.itemconfig(self.__id, image=self.__ImgLeft)
+            if dy == 1: 
+                self.__y += self.__speed
+                self.__canvas.itemconfig(self.__id, image=self.__ImgDown)
+            if dy == -1: 
+                self.__y -= self.__speed
+                self.__canvas.itemconfig(self.__id, image=self.__ImgUp)
             if sum([abs(dx), abs(dy)]): self.fuel -= 1
-            self.__repaint()
+            self.repaint()
 
     def __create(self):
-        self.id = self.__canvas.create_rectangle(self.__x, self.__y, self.__x + Tank.__SIZE, self.__y + Tank.__SIZE, fill="red")
+        self.__id = self.__canvas.create_image(self.__x, self.__y, image=self.__ImgUp, anchor=NW)
 
-    def __fire(self):
+    def fire(self):
         if self.__ammo > 0:
             self.__ammo -= 1
             print("Стреляю!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-    def __repaint(self):
-        self.__canvas.moveto(self.id, self.__x, self.__y)
+    def repaint(self):
+        self.__canvas.moveto(self.__id, self.__x, self.__y)
         self.__hitbox.MoveTo(self.__x, self.__y)
 
-    def __Intersects(self, OtherTank):
+    def Intersects(self, OtherTank):
         return self.__hitbox.Intersects(OtherTank.__hitbox)
 
     def __str__(self):
@@ -67,4 +82,4 @@ class Tank:
               f"Health: {self.__health}, Ammo: {self.__ammo}, "
               f"X: {self.__x}, Y: {self.__y}")
 
-
+    ammo = property(GetAmmo, SetAmmo)
