@@ -1,5 +1,7 @@
 import texture as t
 from tkinter import NW
+from random import randint, choice
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 
@@ -21,7 +23,11 @@ def CreateMap(rows = 20, cols = 20):
     for i in range(rows):
         row = []
         for j in range(cols):
-            row.append(_Cell(_Canvas, CONCREATE, BLOCK_SIZE * j, BLOCK_SIZE * i))
+            block = GROUND
+            if i == 0 or j == 0 or i == rows - 1 or j == cols - 1:
+                block = CONCREATE
+            elif randint(1, 100) <= 15: block = choice([BRICK, WATER, CONCREATE])
+            row.append(_Cell(_Canvas, block, BLOCK_SIZE * j, BLOCK_SIZE * i))
         _Map.append(row)
 
 def UpdateMap(CameraObj):
@@ -30,6 +36,7 @@ def UpdateMap(CameraObj):
         for col in row:
             col.SetX(col.GetOx() - CameraObj.OffsetX)
             col.SetY(col.GetOy() - CameraObj.OffsetY)
+            col.Move()
 
 def Initialize(Canvas):
     global _Canvas
@@ -72,3 +79,7 @@ class _Cell:
     def SetX(self, value): self.__x = value
 
     def SetY(self, value): self.__y = value
+
+    def Move(self):
+        if self.__block != GROUND:
+            self.__canvas.moveto(self.__id, self.__x, self.__y)

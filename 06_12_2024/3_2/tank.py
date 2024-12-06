@@ -146,8 +146,8 @@ class Tank:
 
     def UndoMove(self):
         if sum([self.Dx, self.Dy]) == 0: return
-        self.__x = self.OldPos["X"]
-        self.__y = self.OldPos["Y"]
+        self.__x -= self.Dx
+        self.__y -= self.Dy
         self.Dx = 0
         self.Dy = 0
 
